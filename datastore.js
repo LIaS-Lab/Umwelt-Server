@@ -1,6 +1,17 @@
 var crypto = require('crypto');
 var redis = require('redis'), client = redis.createClient();
 
+function generateIdFunction(key) {
+  return function() {
+    return new Promise((resolve, reject) => {
+      client.incr(`next_${key}_id`, (err, id) => {
+        if (err) reject(err);
+        else resolve(id);
+      });
+    });
+  }
+}
+
 var Auths = {
   generateToken: function() {
     return new Promise((resolve, reject) => {
@@ -30,14 +41,7 @@ var Auths = {
 }
 
 var Users = {
-  generateId: function() {
-    return new Promise((resolve, reject) => {
-      client.incr('next_user_id', (err, id) => {
-        if (err) reject(err);
-        else resolve(id);
-      });
-    });
-  },
+  generateId: generateIdFunction('user'),
   create: function(name, lat, lon) {
     return Users.generateId().then(id => {
       var key = `user:${id}`;
@@ -56,4 +60,24 @@ var Users = {
   }
 };
 
-module.exports = { Auths, Users }
+var Entries = {
+  generateId: generateIdFunction('entry'),
+  create: function(userId, time, type, value) {
+    return Entries.generateId().then(id => {
+      var key = `entry:${id}`;
+      client.hmset(key, { userId, time, type, value });
+      return id;
+    })
+  },
+  get: function(id) {
+    return new Promise((resolve, reject) => {
+      var key = `entry:${id}`;
+      client.hgetall(key, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    });
+  }
+}
+
+module.exports = { Auths, Users, Entries }

@@ -54,4 +54,25 @@ describe('datastore', () => {
       })
     })
   });
+
+  describe('Entries', () => {
+    it('should generate IDs successfully', (done) => {
+      datastore.Entries.generateId().then(id => {
+        console.log('Generated ID: ', id);
+        done();
+      });
+    });
+    it('should create and store entries', (done) => {
+      datastore.Entries.create(1000, 1234567890, 1, 14.5).then(id => {
+        datastore.Entries.get(id).then(entry => {
+          entry.userId.should.equal('1000');
+          entry.time.should.equal('1234567890');
+          entry.type.should.equal('1');
+          entry.value.should.equal('14.5');
+
+          done();
+        });
+      })
+    })
+  });
 });
