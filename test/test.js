@@ -51,8 +51,8 @@ describe('datastore', () => {
 
           done();
         });
-      })
-    })
+      });
+    });
   });
 
   describe('Entries', () => {
@@ -72,7 +72,7 @@ describe('datastore', () => {
 
           done();
         });
-      })
-    })
+      });
+    });
   });
 });
