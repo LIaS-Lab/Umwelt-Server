@@ -74,5 +74,32 @@ describe('datastore', () => {
         });
       });
     });
+    it('can search by user ID', (done) => {
+      datastore.Entries.create(1001, 1234567890, 1, 14.5).then(id => {
+        datastore.Entries.allForUser(1001).then(entries => {
+          entries.indexOf(id.toString()).should.not.equal(-1);
+
+          done();
+        });
+      });
+    });
+    it('can search by type', (done) => {
+      datastore.Entries.create(1001, 1234567890, 3, 14.5).then(id => {
+        datastore.Entries.allOfType(3).then(entries => {
+          entries.indexOf(id.toString()).should.not.equal(-1);
+
+          done();
+        });
+      });
+    });
+    it('can search by ID and type', (done) => {
+      datastore.Entries.create(1002, 1234567890, 3, 14.5).then(id => {
+        datastore.Entries.all(1002, 3).then(entries => {
+          entries.indexOf(id.toString()).should.not.equal(-1);
+
+          done();
+        });
+      });
+    });
   });
 });

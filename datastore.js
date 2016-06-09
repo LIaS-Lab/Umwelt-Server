@@ -66,6 +66,8 @@ var Entries = {
     return Entries.generateId().then(id => {
       var key = `entry:${id}`;
       client.hmset(key, { userId, time, type, value });
+      client.sadd(`entries:type:${type}`, id);
+      client.sadd(`entries:userId:${userId}`, id);
       return id;
     })
   },
@@ -73,6 +75,30 @@ var Entries = {
     return new Promise((resolve, reject) => {
       var key = `entry:${id}`;
       client.hgetall(key, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    });
+  },
+  allForUser: function(userId) {
+    return new Promise((resolve, reject) => {
+      client.smembers(`entries:userId:${userId}`, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    });
+  },
+  allOfType: function(type) {
+    return new Promise((resolve, reject) => {
+      client.smembers(`entries:type:${type}`, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    });
+  },
+  all: function(userId, type) {
+    return new Promise((resolve, reject) => {
+      client.sinter(`entries:type:${type}`, `entries:userId:${userId}`, (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
