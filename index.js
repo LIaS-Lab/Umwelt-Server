@@ -79,7 +79,7 @@ app.get('/entries/most-recent/:userId/:type', (req, res) => {
       res.json(entry);
     })
   });
-})
+});
 
 app.get('/entries/:id', (req, res) => {
   datastore.Entries.get(req.params.id).then(entry => {
