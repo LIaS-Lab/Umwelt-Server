@@ -68,6 +68,7 @@ var Entries = {
       client.hmset(key, { userId, time, type, value });
       client.sadd(`entries:type:${type}`, id);
       client.sadd(`entries:userId:${userId}`, id);
+      client.set(`entries:mostRecent:${userId}:${type}`, id);
       return id;
     })
   },
@@ -99,6 +100,14 @@ var Entries = {
   all: function(userId, type) {
     return new Promise((resolve, reject) => {
       client.sinter(`entries:type:${type}`, `entries:userId:${userId}`, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    });
+  },
+  mostRecent: function(userId, type) {
+    return new Promise((resolve, reject) => {
+      client.get(`entries:mostRecent:${userId}:${type}`, (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });

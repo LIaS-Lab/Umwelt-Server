@@ -101,5 +101,14 @@ describe('datastore', () => {
         });
       });
     });
+    it('can get the most recent entry for ID and type', (done) => {
+      datastore.Entries.create(1003, 1234567890, 3, 14.5).then(id => {
+        datastore.Entries.mostRecent(1003, 3).then(retrievedId => {
+          id.toString().should.equal(retrievedId);
+
+          done();
+        });
+      });
+    });
   });
 });
