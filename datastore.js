@@ -81,6 +81,21 @@ var Entries = {
       });
     });
   },
+  getBulk: function(ids) {
+    return new Promise((resolve, reject) => {
+      var commands = ids.map(val => ['hgetall', `entry:${val}`]);
+      client.multi(commands).exec((err, res) => {
+        if (err) reject(err);
+        else {
+          // Add IDs to result
+          res.forEach((elem, idx) => {
+            elem.id = ids[idx];
+          });
+          resolve(res);
+        }
+      });
+    });
+  },
   allForUser: function(userId) {
     return new Promise((resolve, reject) => {
       client.smembers(`entries:userId:${userId}`, (err, res) => {

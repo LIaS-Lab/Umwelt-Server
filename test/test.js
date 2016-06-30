@@ -74,6 +74,21 @@ describe('datastore', () => {
         });
       });
     });
+    it('can get entries in bulk', (done) => {
+      datastore.Entries.create(1001, 1234567890, 1, 14.5).then(id1 => {
+        datastore.Entries.create(1001, 1234567891, 1, 15.5).then(id2 => {
+          datastore.Entries.create(1001, 1234567892, 1, 16.5).then(id3 => {
+            datastore.Entries.getBulk([id1, id2, id3]).then(entries => {
+              entries.find(e => e.id == id1).should.be.ok();
+              entries.find(e => e.id == id2).should.be.ok();
+              entries.find(e => e.id == id3).should.be.ok();
+
+              done();
+            });
+          });
+        });
+      });
+    });
     it('can search by user ID', (done) => {
       datastore.Entries.create(1001, 1234567890, 1, 14.5).then(id => {
         datastore.Entries.allForUser(1001).then(entries => {
