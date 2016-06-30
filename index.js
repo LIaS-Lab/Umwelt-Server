@@ -139,6 +139,13 @@ app.get('/entries/most-recent/:userId/:type', (req, res) => {
   });
 });
 
+app.get('/entries/bulk', (req, res) => {
+  entryIds = req.query.id;
+  datastore.Entries.getBulk(entryIds).then(entries => {
+    res.json(entries);
+  });
+});
+
 // Get a particular entry by ID
 // Parameters (URL):
 //   id - the ID for which to get the entry
