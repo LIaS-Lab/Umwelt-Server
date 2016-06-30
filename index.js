@@ -139,6 +139,19 @@ app.get('/entries/most-recent/:userId/:type', (req, res) => {
   });
 });
 
+// Get entries in bulk
+// Parameters (GET):
+//   id (multiple) - the IDs to get entries for
+// Returns (JSON):
+//   Array of [
+//     id - the ID of the entry
+//     userId - the ID of the user that created the entry
+//     time - the unix timestamp at which the entry was created
+//     type - the type the entry is (arbitrary integer, to be defined later)
+//     value - the value the entry has, in a unit defined by the type
+//   ]
+// Example:
+//   GET /entries/bulk?id=124&id=125&id=126
 app.get('/entries/bulk', (req, res) => {
   entryIds = req.query.id;
   datastore.Entries.getBulk(entryIds).then(entries => {
